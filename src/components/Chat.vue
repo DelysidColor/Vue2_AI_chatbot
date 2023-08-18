@@ -4,18 +4,19 @@
       <ul class="chat-list">
         <li class="greet-message">
           <p>
-            Hello, friend! How can I help you? Choose one of the following
-            options:
+            <span
+              >Hello, friend! How can I help you? Choose one of the following
+              options:</span
+            >
           </p>
         </li>
         <li
-          @click="checkChoosen(message)"
-          class="message"
-          :class="{ sender: isSenderMessage(message) }"
           v-for="(message, index) in messages"
-          :key="index">
+          :key="index"
+          :class="message.author"
+          @click="answer(message.text)">
           <p>
-            {{ message }}
+            <span>{{ message.text }}</span>
           </p>
         </li>
       </ul>
@@ -25,45 +26,56 @@
 
 <script>
 export default {
-  name: "Chat",
   data: () => ({
     messages: [],
-    senderMess: false,
-    messageTexts: {
-      chat: [
-        "Buy some food!",
-        "Order the ticket to concert.",
-        "Ok, will do it for you. Something else?",
-        "I did everything I can! But you can always choose the options again.",
-      ],
-    },
   }),
   methods: {
     greetings() {
+      let mess1 = {
+        text: "Buy some food!",
+        author: "server",
+      };
+      let mess2 = {
+        text: "Order the ticket to concert.",
+        author: "server",
+      };
       setTimeout(() => {
-        this.messages.push(...this.messageTexts.chat.slice(0, 2));
+        this.messages.push(mess1, mess2);
       }, 1000);
     },
-    isSenderMessage(message) {
-      return (
-        message === "Buy some food!" ||
-        message === "Order the ticket to concert."
-      );
-    },
-    checkChoosen(e) {
-      if (this.isSenderMessage(e)) {
-        this.messages.push(e);
-        setTimeout(() => {
-          this.messages.push(
-            this.messageTexts.chat[2],
-            ...this.messageTexts.chat.slice(0, 2)
-          );
-        }, 1100);
-      }
+    answer(e) {
+      let ans = {
+        text: e,
+        author: "user",
+      };
+      let mess1 = {
+        text: "Buy some food!",
+        author: "server",
+      };
+      let mess2 = {
+        text: "Order the ticket to concert.",
+        author: "server",
+      };
+      let mess3 = {
+        text: "Ok, will do it for you. Something else?",
+        author: "server",
+      };
+      let mess4 = {
+        text: "I did everything I can! But you can always choose the options again.",
+        author: "server",
+      };
+      this.messages.push(ans);
+      setTimeout(() => {
+        this.messages.push(mess3);
+      }, 1100);
+      setTimeout(() => {
+        this.messages.push(mess2, mess1);
+      }, 1600);
+
       if (this.messages.length > 7) {
         setTimeout(() => {
-          this.messages.push(...this.messageTexts.chat[3]);
-        }, 1101);
+          this.messages.push(mess4);
+        }, 1401);
       }
       setTimeout(() => {
         this.$nextTick(() => {
@@ -78,28 +90,19 @@ export default {
 };
 </script>
 
-<style scoped land="scss">
-.sender {
-  background-color: #f2f2f2; /* Customize this color */
-  color: #333; /* Customize this color */
-  text-align: right;
-}
+<style scoped lang="scss">
 .chat-list {
   margin-left: 10px;
   margin-right: 10px;
   padding-left: 0;
-  list-style-type: none;
 }
 
 .chat {
-  display: flex;
   border: 1px solid grey;
   border-radius: 8px;
-  width: 400px;
+  width: 40vw;
   height: 60vh;
   margin: 0 auto;
-  align-items: space-between;
-  justify-content: space-between;
   background: linear-gradient(
     135deg,
     rgb(110, 110, 110) 0%,
@@ -108,6 +111,51 @@ export default {
     rgb(94, 151, 191) 100%
   );
   box-shadow: 0 0 10px 0 #5c5c5c inset;
+}
+
+.chat,
+.chat-list {
+  display: flex;
+  flex-direction: column;
+  list-style-type: none;
+}
+
+.chat-list {
+  padding: 0;
+
+  span {
+    padding: 10px;
+    color: rgb(252, 247, 238);
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    letter-spacing: 1.3px;
+    border-radius: 10px;
+  }
+
+  .server {
+    span {
+      background-color: rgb(78, 34, 80);
+      float: left;
+    }
+  }
+  .user {
+    span {
+      background-color: rgb(13, 80, 18);
+      float: right;
+    }
+  }
+}
+
+.greet-message {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  border-radius: 15px;
+  background-color: rgb(231, 200, 1);
+  margin: 5px;
+  padding-left: 8px;
+  span {
+    color: rgb(33, 22, 2);
+  }
 }
 
 .chat-list-container {
@@ -121,38 +169,8 @@ export default {
   height: 0;
 }
 
-.message,
-.greet-message {
-  display: inline-block;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 400;
-  letter-spacing: 1.3px;
-  border-radius: 15px;
-  background-color: rgb(78, 34, 80);
-  margin: 5px;
-  color: rgb(252, 247, 238);
-}
-
-.message p,
-.greet-message p {
-  margin: 0;
-  padding: 12px;
-}
-
 .message:hover {
   box-shadow: 0 0 10px 0 #f2a6fd inset, 0 0 10px 4px #fef595;
   border: none;
-}
-
-.sender {
-  display: inline-block;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 400;
-  letter-spacing: 1.3px;
-  border-radius: 15px;
-  background-color: rgb(13, 80, 18);
-  margin: 5px;
-  color: rgb(252, 247, 238);
-  float: right;
 }
 </style>
