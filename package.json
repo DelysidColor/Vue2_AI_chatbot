@@ -13,6 +13,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
+    "axios": "^1.4.0",
     "node-sass": "^9.0.0",
     "sass-loader": "^13.3.2",
     "vue-template-compiler": "^2.6.14"

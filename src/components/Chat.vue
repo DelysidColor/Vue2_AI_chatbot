@@ -2,24 +2,19 @@
   <section class="chat">
     <div class="chat-list-container" ref="chatbox">
       <ul class="chat-list">
-        <li class="greet-message">
-          <p>
-            <span
-              >Hello, friend! How can I help you? Choose one of the following
-              options:</span
-            >
-          </p>
-        </li>
         <li
           v-for="(message, index) in messages"
           :key="index"
-          :class="message.author"
-          @click="answer(message.text)">
+          :class="message.author">
           <p>
             <span>{{ message.text }}</span>
           </p>
         </li>
       </ul>
+    </div>
+    <div class="inputs">
+      <input type="text" v-model="message" @keyup.enter="sendMessage" />
+      <button @click="sendMessage">Send</button>
     </div>
   </section>
 </template>
@@ -28,64 +23,31 @@
 export default {
   data: () => ({
     messages: [],
+    message: "",
   }),
   methods: {
-    greetings() {
-      let mess1 = {
-        text: "Buy some food!",
-        author: "server",
-      };
-      let mess2 = {
-        text: "Order the ticket to concert.",
-        author: "server",
-      };
-      setTimeout(() => {
-        this.messages.push(mess1, mess2);
-      }, 1000);
-    },
-    answer(e) {
-      let ans = {
-        text: e,
+    sendMessage() {
+      this.messages.push({
+        text: this.message,
         author: "user",
-      };
-      let mess1 = {
-        text: "Buy some food!",
-        author: "server",
-      };
-      let mess2 = {
-        text: "Order the ticket to concert.",
-        author: "server",
-      };
-      let mess3 = {
-        text: "Ok, will do it for you. Something else?",
-        author: "server",
-      };
-      let mess4 = {
-        text: "I did everything I can! But you can always choose the options again.",
-        author: "server",
-      };
-      this.messages.push(ans);
-      setTimeout(() => {
-        this.messages.push(mess3);
-      }, 1100);
-      setTimeout(() => {
-        this.messages.push(mess2, mess1);
-      }, 1600);
+      });
 
-      if (this.messages.length > 7) {
-        setTimeout(() => {
-          this.messages.push(mess4);
-        }, 1401);
-      }
-      setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
+      this.$axios
+        .get(
+          `https://www.cleverbot.com/getreply?key=CC8uqcCcSO3VsRFvp5-uW5Nxvow&input=${this.message}`
+        )
+        .then((res) => {
+          this.messages.push({
+            text: res.data.output,
+            author: "server",
+          });
         });
-      }, 1103);
+      this.message = "";
+
+      this.$nextTick(() => {
+        this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
+      });
     },
-  },
-  created() {
-    this.greetings();
   },
 };
 </script>
@@ -98,6 +60,7 @@ export default {
 }
 
 .chat {
+  justify-content: space-between;
   border: 1px solid grey;
   border-radius: 8px;
   width: 40vw;
@@ -125,7 +88,7 @@ export default {
 
   span {
     padding: 10px;
-    color: rgb(252, 247, 238);
+
     font-family: "Montserrat", sans-serif;
     font-weight: 400;
     letter-spacing: 1.3px;
@@ -135,26 +98,16 @@ export default {
   .server {
     span {
       background-color: rgb(78, 34, 80);
+      color: rgb(252, 247, 238);
       float: left;
     }
   }
   .user {
     span {
-      background-color: rgb(13, 80, 18);
+      background-color: rgb(255, 240, 24);
+      color: rgb(21, 1, 30);
       float: right;
     }
-  }
-}
-
-.greet-message {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 400;
-  border-radius: 15px;
-  background-color: rgb(231, 200, 1);
-  margin: 5px;
-  padding-left: 8px;
-  span {
-    color: rgb(33, 22, 2);
   }
 }
 
@@ -169,8 +122,23 @@ export default {
   height: 0;
 }
 
-.message:hover {
-  box-shadow: 0 0 10px 0 #f2a6fd inset, 0 0 10px 4px #fef595;
-  border: none;
+.inputs {
+  display: flex;
+
+  input {
+    line-height: 3;
+    width: 100%;
+    border: none;
+    border-top: 1px solid grey;
+    border-bottom-left-radius: 7px;
+    padding-left: 10px;
+  }
+
+  button {
+    width: 140px;
+    border-bottom-right-radius: 7px;
+    background: rgb(40, 0, 97);
+    color: wheat;
+  }
 }
 </style>
